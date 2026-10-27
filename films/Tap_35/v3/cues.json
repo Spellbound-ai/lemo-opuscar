@@ -1,0 +1,957 @@
+[
+{
+"t0": 0.333,
+"t1": 2.8,
+"text": "Một ca bệnh khó được đưa lên bàn hội chẩn."
+},
+{
+"t0": 3.4,
+"t1": 5.666,
+"text": "Trong phòng, năm người bắt đầu phân tích hồ sơ."
+},
+{
+"t0": 6.2,
+"t1": 7.5,
+"text": "Người thứ nhất lên tiếng trước:"
+},
+{
+"t0": 7.9,
+"t1": 11.066,
+"text": "\"Theo dữ liệu hiện tại, ba khả năng cao nhất là thế này.\""
+},
+{
+"t0": 11.766,
+"t1": 13.7,
+"text": "Người thứ hai lập tức nối lời,"
+},
+{
+"t0": 13.866,
+"t1": 15.466,
+"text": "đề xuất đúng ba xét nghiệm cụ thể"
+},
+{
+"t0": 15.566,
+"t1": 17.5,
+"text": "để phân biệt rõ nhất giữa ba khả năng đó."
+},
+{
+"t0": 18.1,
+"t1": 19.9,
+"text": "Người thứ ba lắc đầu. Họ chỉ"
+},
+{
+"t0": 19.966,
+"t1": 22.2,
+"text": "ra một dấu hiệu không khớp với giả thuyết số một,"
+},
+{
+"t0": 22.6,
+"t1": 24.4,
+"text": "cảnh báo cả nhóm đang vội vàng kết luận."
+},
+{
+"t0": 25.366,
+"t1": 26.733,
+"text": "Ngay lúc đó, người thứ tư"
+},
+{
+"t0": 26.866,
+"t1": 29.266,
+"text": "gạt đi một xét nghiệm đắt đỏ nhưng ít giá trị,"
+},
+{
+"t0": 29.566,
+"t1": 31.266,
+"text": "yêu cầu làm phương án rẻ hơn trước."
+},
+{
+"t0": 32.0,
+"t1": 33.466,
+"text": "Người thứ năm im lặng suốt buổi,"
+},
+{
+"t0": 33.766,
+"t1": 35.666,
+"text": "chỉ lặng lẽ kiểm tra xem tên các"
+},
+{
+"t0": 35.766,
+"t1": 36.866,
+"text": "xét nghiệm ghi có đúng không,"
+},
+{
+"t0": 37.1,
+"t1": 39.266,
+"text": "lập luận cả nhóm có mâu thuẫn chỗ nào không."
+},
+{
+"t0": 40.2,
+"t1": 42.533,
+"text": "Sau vài vòng tranh luận, kết quả trả về,"
+},
+{
+"t0": 42.8,
+"t1": 45.5,
+"text": "giả thuyết thay đổi, và họ chốt được một chẩn đoán."
+},
+{
+"t0": 46.266,
+"t1": 48.533,
+"text": "Bác sĩ nào làm lâu năm cũng thấy cảnh này quen."
+},
+{
+"t0": 49.0,
+"t1": 50.366,
+"text": "Một buổi hội chẩn tử tế."
+},
+{
+"t0": 51.133,
+"t1": 53.766,
+"text": "Chỉ có điều, trong phòng này không có bác sĩ nào cả."
+},
+{
+"t0": 54.533,
+"t1": 56.733,
+"text": "Thậm chí không phải năm cỗ máy tách biệt."
+},
+{
+"t0": 57.3,
+"t1": 60.7,
+"text": "Đó là một model AI duy nhất, đội lần lượt năm chiếc mũ,"
+},
+{
+"t0": 61.0,
+"t1": 62.266,
+"text": "tự cãi nhau với chính mình."
+},
+{
+"t0": 62.866,
+"t1": 65.9,
+"text": "Hệ thống đó tên là MAI-DxO của Microsoft."
+},
+{
+"t0": 66.533,
+"t1": 68.6,
+"text": "Tuần này, nó được đăng trên tạp chí Science"
+},
+{
+"t0": 68.8,
+"t1": 70.766,
+"text": "với một kết quả khiến ngành y bàn tán:"
+},
+{
+"t0": 71.3,
+"t1": 74.8,
+"text": "trên những ca bệnh khó, hệ thống này chẩn đoán đúng 83%,"
+},
+{
+"t0": 75.466,
+"t1": 77.866,
+"text": "trong khi tỷ lệ của bác sĩ là 36%."
+},
+{
+"t0": 78.7,
+"t1": 79.666,
+"text": "Nhớ lại Tập 34,"
+},
+{
+"t0": 79.9,
+"t1": 82.0,
+"text": "model AI gửi tin báo giả cho cảnh sát,"
+},
+{
+"t0": 82.4,
+"t1": 85.6,
+"text": "hay Tập 33, AI chỉ kê đơn trị mụn phạm vi hẹp."
+},
+{
+"t0": 86.333,
+"t1": 89.266,
+"text": "Hệ thống mới này, AI làm bài xuất sắc trên giấy tờ,"
+},
+{
+"t0": 89.866,
+"t1": 90.666,
+"text": "nhưng thực tế"
+},
+{
+"t0": 90.666,
+"t1": 93.166,
+"text": "nó chưa từng bước chân vào bất kỳ phòng khám nào."
+},
+{
+"t0": 93.733,
+"t1": 96.566,
+"text": "Đứng trước con số 83%, thay vì hỏi \"AI"
+},
+{
+"t0": 96.9,
+"t1": 97.9,
+"text": "sắp thay bác sĩ chưa?\","
+},
+{
+"t0": 98.2,
+"t1": 99.933,
+"text": "chúng ta cần bóc tách thống kê này."
+},
+{
+"t0": 100.366,
+"t1": 101.166,
+"text": "Và quan trọng hơn,"
+},
+{
+"t0": 101.5,
+"t1": 103.2,
+"text": "nếu một hội đồng ảo tương tự"
+},
+{
+"t0": 103.366,
+"t1": 105.8,
+"text": "được đưa vào mạng lưới hội chẩn từ xa tại Việt Nam,"
+},
+{
+"t0": 106.166,
+"t1": 107.766,
+"text": "vai trò của con người sẽ nằm ở đâu?"
+},
+{
+"t0": 108.666,
+"t1": 112.366,
+"text": "Trước hết, MAI-DxO không phải là một mô hình AI mới."
+},
+{
+"t0": 112.966,
+"t1": 115.166,
+"text": "Bản chất, nó là một bộ điều phối,"
+},
+{
+"t0": 115.733,
+"t1": 117.0,
+"text": "một phương pháp tổ chức để"
+},
+{
+"t0": 117.166,
+"t1": 119.733,
+"text": "model có sẵn làm việc theo luồng. Sơ"
+},
+{
+"t0": 119.9,
+"t1": 120.933,
+"text": "đồ này cho thấy cách một"
+},
+{
+"t0": 121.066,
+"t1": 122.8,
+"text": "model nền duy nhất được chia việc."
+},
+{
+"t0": 123.3,
+"t1": 124.9,
+"text": "Nó đội lần lượt năm chiếc mũ:"
+},
+{
+"t0": 125.533,
+"t1": 128.0,
+"text": "Bác sĩ Giả thuyết, Bác sĩ Chọn xét nghiệm,"
+},
+{
+"t0": 128.566,
+"t1": 129.466,
+"text": "Bác sĩ Phản biện,"
+},
+{
+"t0": 130.066,
+"t1": 133.333,
+"text": "Bác sĩ Quản lý chi phí, và cuối cùng là Bác sĩ Kiểm tra."
+},
+{
+"t0": 134.2,
+"t1": 135.066,
+"text": "Nhưng trí thông minh"
+},
+{
+"t0": 135.166,
+"t1": 137.166,
+"text": "y khoa cốt lõi vẫn nằm ở model nền,"
+},
+{
+"t0": 137.6,
+"t1": 138.966,
+"text": "ví dụ như GPT-5."
+},
+{
+"t0": 139.6,
+"t1": 141.9,
+"text": "Năm chiếc mũ này không tự sinh ra kiến thức mới,"
+},
+{
+"t0": 142.3,
+"t1": 143.4,
+"text": "chúng chỉ tạo ra kỷ luật"
+},
+{
+"t0": 143.566,
+"t1": 145.4,
+"text": "để hệ thống tự dò lỗi của chính mình."
+},
+{
+"t0": 146.266,
+"t1": 148.866,
+"text": "Đội ngũ phát triển không dạy AI cách làm bác sĩ,"
+},
+{
+"t0": 149.3,
+"t1": 150.4,
+"text": "họ sao chép chính xác"
+},
+{
+"t0": 150.5,
+"t1": 151.866,
+"text": "quy trình làm việc của một hội đồng"
+},
+{
+"t0": 151.933,
+"t1": 152.733,
+"text": "chuyên môn con người,"
+},
+{
+"t0": 153.3,
+"t1": 154.0,
+"text": "dùng cách phân"
+},
+{
+"t0": 154.0,
+"t1": 156.333,
+"text": "vai để triệt tiêu các điểm mù của máy móc."
+},
+{
+"t0": 157.066,
+"t1": 161.966,
+"text": "Giờ ta quay lại với con số 83% và 36%. Câu hỏi đầu tiên:"
+},
+{
+"t0": 162.666,
+"t1": 164.7,
+"text": "bác sĩ trong bài kiểm tra này là ai?"
+},
+{
+"t0": 165.5,
+"t1": 167.0,
+"text": "Họ là các bác sĩ đa khoa."
+},
+{
+"t0": 167.466,
+"t1": 169.466,
+"text": "Trong khi ở thực tế lâm sàng, những ca"
+},
+{
+"t0": 169.566,
+"t1": 172.266,
+"text": "khó ở mức độ này luôn được giao cho bác sĩ chuyên khoa"
+},
+{
+"t0": 172.466,
+"t1": 174.2,
+"text": "hoặc một hội đồng y khoa xử lý."
+},
+{
+"t0": 174.866,
+"t1": 176.933,
+"text": "Nhìn vào biểu đồ này để thấy điều kiện làm bài"
+},
+{
+"t0": 177.1,
+"t1": 177.9,
+"text": "quan trọng thế nào."
+},
+{
+"t0": 178.3,
+"t1": 180.666,
+"text": "Ở phiên bản thử nghiệm năm 2025,"
+},
+{
+"t0": 181.0,
+"t1": 183.7,
+"text": "khi bác sĩ phải làm bài mà không được tra cứu tài liệu,"
+},
+{
+"t0": 183.933,
+"t1": 184.866,
+"text": "không được hỏi đồng nghiệp,"
+},
+{
+"t0": 185.2,
+"t1": 186.766,
+"text": "họ chỉ đạt mức 20%."
+},
+{
+"t0": 187.5,
+"t1": 189.2,
+"text": "AI trông như giỏi gấp bốn lần."
+},
+{
+"t0": 190.166,
+"t1": 191.3,
+"text": "Nhưng khi luật chơi"
+},
+{
+"t0": 191.366,
+"t1": 193.666,
+"text": "thay đổi trong bản công bố trên tạp chí Science,"
+},
+{
+"t0": 194.0,
+"t1": 195.6,
+"text": "các bác sĩ được phép mở tài liệu,"
+},
+{
+"t0": 196.0,
+"t1": 198.466,
+"text": "kết quả của họ lập tức tăng lên 36%."
+},
+{
+"t0": 199.0,
+"t1": 201.966,
+"text": "Khoảng cách thu hẹp đáng kể, chỉ còn gấp 2,3 lần."
+},
+{
+"t0": 203.133,
+"t1": 206.2,
+"text": "Câu hỏi tiếp theo: ca thật hay ca mô phỏng?"
+},
+{
+"t0": 207.2,
+"t1": 209.6,
+"text": "304 ca bệnh này đều là dữ liệu cũ,"
+},
+{
+"t0": 209.9,
+"t1": 211.7,
+"text": "từng công bố trên tạp chí New England,"
+},
+{
+"t0": 211.933,
+"t1": 214.166,
+"text": "được dựng lại thành các bài thi tương tác bằng chữ,"
+},
+{
+"t0": 214.6,
+"t1": 217.533,
+"text": "không phải bệnh nhân thật đang nằm trên cáng cấp cứu. Dù"
+},
+{
+"t0": 217.7,
+"t1": 219.3,
+"text": "AI đạt tỷ lệ đúng 80%"
+},
+{
+"t0": 219.466,
+"t1": 221.866,
+"text": "khi chạy trên dữ liệu cấp cứu cũ ở Boston,"
+},
+{
+"t0": 222.333,
+"t1": 224.7,
+"text": "chính lãnh đạo mảng AI của Microsoft thừa nhận"
+},
+{
+"t0": 225.0,
+"t1": 226.066,
+"text": "hệ thống này vẫn đang chờ"
+},
+{
+"t0": 226.166,
+"t1": 229.0,
+"text": "thử nghiệm lâm sàng thực tế tại bệnh viện Beth Israel."
+},
+{
+"t0": 229.6,
+"t1": 231.266,
+"text": "Nó chưa được phép dùng để chữa bệnh."
+},
+{
+"t0": 232.133,
+"t1": 233.133,
+"text": "Và câu hỏi cuối cùng:"
+},
+{
+"t0": 233.933,
+"t1": 235.466,
+"text": "ai là người cầm thước đo?"
+},
+{
+"t0": 236.166,
+"t1": 238.766,
+"text": "Bộ đề thi này do chính Microsoft xây dựng."
+},
+{
+"t0": 239.166,
+"t1": 240.3,
+"text": "Dù đã qua bình duyệt,"
+},
+{
+"t0": 240.6,
+"t1": 242.266,
+"text": "đây vẫn là sân nhà của nhà phát triển."
+},
+{
+"t0": 243.066,
+"t1": 244.566,
+"text": "Model này thực sự có năng lực,"
+},
+{
+"t0": 245.0,
+"t1": 248.0,
+"text": "nhưng việc nó giỏi gấp đôi hay gấp bốn lần con người"
+},
+{
+"t0": 248.566,
+"t1": 250.966,
+"text": "hoàn toàn phụ thuộc vào việc ta chọn mở trói"
+},
+{
+"t0": 251.166,
+"t1": 253.266,
+"text": "hay trói tay con người trong phòng thí nghiệm."
+},
+{
+"t0": 254.2,
+"t1": 255.466,
+"text": "Mang hệ thống này về Việt Nam,"
+},
+{
+"t0": 255.733,
+"t1": 259.466,
+"text": "hãy đặt nó vào Quyết định 2628 ban hành năm 2020."
+},
+{
+"t0": 260.166,
+"t1": 261.466,
+"text": "Mạng lưới y tế từ xa"
+},
+{
+"t0": 261.7,
+"t1": 263.133,
+"text": "kết nối hơn 1.000 điểm cầu"
+},
+{
+"t0": 263.366,
+"t1": 266.733,
+"text": "từ tuyến huyện, vùng đảo xa như Trường Sa, Cô Tô"
+},
+{
+"t0": 266.966,
+"t1": 268.166,
+"text": "về các bệnh viện trung ương"
+},
+{
+"t0": 268.366,
+"t1": 271.1,
+"text": "tại Hà Nội và Thành phố Hồ Chí Minh. Ở đây,"
+},
+{
+"t0": 271.366,
+"t1": 272.266,
+"text": "thời gian của chuyên gia"
+},
+{
+"t0": 272.366,
+"t1": 274.2,
+"text": "tuyến trên là tài nguyên khan hiếm nhất."
+},
+{
+"t0": 274.766,
+"t1": 277.866,
+"text": "Hệ thống này sinh ra để kéo giảm tỷ lệ chẩn đoán nhầm,"
+},
+{
+"t0": 278.2,
+"t1": 278.733,
+"text": "đồng thời"
+},
+{
+"t0": 278.733,
+"t1": 280.933,
+"text": "trực tiếp nâng cao năng lực chuyên môn cho các y"
+},
+{
+"t0": 281.1,
+"t1": 281.966,
+"text": "bác sĩ tại cơ sở."
+},
+{
+"t0": 282.766,
+"t1": 284.133,
+"text": "Nếu có một hội đồng AI,"
+},
+{
+"t0": 284.466,
+"t1": 285.4,
+"text": "vị trí đầu tiên của nó"
+},
+{
+"t0": 285.666,
+"t1": 288.133,
+"text": "là ngồi cạnh bác sĩ tuyến dưới trước giờ hội chẩn."
+},
+{
+"t0": 288.6,
+"t1": 289.9,
+"text": "Nó liệt kê giả thuyết,"
+},
+{
+"t0": 290.1,
+"t1": 291.7,
+"text": "đề xuất chỉ định xét nghiệm trước,"
+},
+{
+"t0": 291.966,
+"t1": 292.766,
+"text": "hoàn thiện hồ sơ,"
+},
+{
+"t0": 293.266,
+"t1": 294.9,
+"text": "để 15 phút quý giá của chuyên gia"
+},
+{
+"t0": 295.0,
+"t1": 296.133,
+"text": "tuyến trên được dùng thẳng"
+},
+{
+"t0": 296.3,
+"t1": 298.733,
+"text": "vào phần khó nhất. Vị trí thứ hai"
+},
+{
+"t0": 298.933,
+"t1": 301.266,
+"text": "là làm bác sĩ phản biện cho chính chuyên gia:"
+},
+{
+"t0": 301.866,
+"t1": 303.333,
+"text": "một tiếng nói không biết mệt mỏi,"
+},
+{
+"t0": 303.6,
+"t1": 305.6,
+"text": "sẵn sàng chất vấn các kết luận vội vàng."
+},
+{
+"t0": 306.333,
+"t1": 308.8,
+"text": "Vị trí thứ ba là hỗ trợ phân luồng, sàng"
+},
+{
+"t0": 308.966,
+"t1": 311.666,
+"text": "lọc xem ca nào thực sự cần đẩy lên hệ thống hội chẩn,"
+},
+{
+"t0": 312.066,
+"t1": 313.366,
+"text": "ca nào có thể xử lý tại chỗ."
+},
+{
+"t0": 314.1,
+"t1": 316.666,
+"text": "AI có thể đứng ở cả hai đầu của mạng lưới này,"
+},
+{
+"t0": 317.3,
+"t1": 319.4,
+"text": "nhưng nó có giải quyết được bài toán y tế hay không"
+},
+{
+"t0": 319.533,
+"t1": 321.933,
+"text": "lại nằm ở cách chúng ta thiết kế luật chơi cho nó."
+},
+{
+"t0": 322.533,
+"t1": 324.066,
+"text": "Dù công nghệ tiến xa đến đâu,"
+},
+{
+"t0": 324.266,
+"t1": 326.3,
+"text": "có ba ranh giới khi ứng dụng vào tuyến dưới"
+},
+{
+"t0": 326.466,
+"t1": 327.466,
+"text": "không được phép vượt qua."
+},
+{
+"t0": 328.166,
+"t1": 331.1,
+"text": "Thứ nhất, trách nhiệm sinh tử luôn thuộc về con người."
+},
+{
+"t0": 331.533,
+"t1": 332.333,
+"text": "Bác sĩ đầu ngành"
+},
+{
+"t0": 332.466,
+"t1": 334.866,
+"text": "sẽ chuyển vai trò từ người trực tiếp đưa ra chẩn đoán"
+},
+{
+"t0": 335.066,
+"t1": 336.366,
+"text": "sang người thẩm định chẩn đoán,"
+},
+{
+"t0": 337.066,
+"t1": 338.766,
+"text": "nhưng họ không biến mất khỏi quy trình."
+},
+{
+"t0": 339.533,
+"t1": 342.0,
+"text": "Thứ hai, AI phải hiểu bối cảnh bản địa."
+},
+{
+"t0": 342.733,
+"t1": 344.0,
+"text": "Nhìn vào hai danh mục này,"
+},
+{
+"t0": 344.533,
+"t1": 347.366,
+"text": "một AI quản lý chi phí dựa trên bảng giá y tế Mỹ"
+},
+{
+"t0": 347.6,
+"t1": 350.2,
+"text": "sẽ vô dụng nếu nó khuyên làm một xét nghiệm đắt tiền"
+},
+{
+"t0": 350.533,
+"t1": 353.133,
+"text": "mà bệnh viện huyện vùng cao hoàn toàn không có máy móc."
+},
+{
+"t0": 354.066,
+"t1": 355.766,
+"text": "Thứ ba, hội chẩn từ xa"
+},
+{
+"t0": 356.166,
+"t1": 357.8,
+"text": "bản chất là một quá trình đào tạo."
+},
+{
+"t0": 358.533,
+"t1": 360.966,
+"text": "Việc lắng nghe chuyên gia phân tích từng bước lập luận"
+},
+{
+"t0": 361.266,
+"t1": 363.9,
+"text": "sẽ giúp bác sĩ tuyến dưới mài giũa tư duy lâm sàng"
+},
+{
+"t0": 364.133,
+"t1": 366.133,
+"text": "và tự tin xử lý những ca tương tự về sau."
+},
+{
+"t0": 367.133,
+"t1": 369.766,
+"text": "Bài học từ Tập 29 ở Thổ Nhĩ Kỳ vẫn còn đó:"
+},
+{
+"t0": 370.2,
+"t1": 372.933,
+"text": "nhóm học sinh dùng chatbot trả đáp án ngay lập tức"
+},
+{
+"t0": 373.166,
+"t1": 376.3,
+"text": "đã làm bài thi thật kém hơn 17% so với nhóm tự học."
+},
+{
+"t0": 376.9,
+"t1": 378.966,
+"text": "Nếu AI chỉ nhả ra đáp án sẵn,"
+},
+{
+"t0": 379.3,
+"t1": 381.266,
+"text": "tuyến dưới sẽ có chẩn đoán chính xác cho ca"
+},
+{
+"t0": 381.366,
+"t1": 382.166,
+"text": "bệnh của ngày hôm nay,"
+},
+{
+"t0": 382.666,
+"t1": 384.066,
+"text": "nhưng chúng ta sẽ tạo ra một hệ thống"
+},
+{
+"t0": 384.133,
+"t1": 386.666,
+"text": "y tế phụ thuộc và yếu kém hơn trong 10 năm tới."
+},
+{
+"t0": 387.466,
+"t1": 389.566,
+"text": "Công cụ này phải được thiết kế như một gia sư:"
+},
+{
+"t0": 390.1,
+"t1": 393.466,
+"text": "hỏi ngược lại, gợi ý và bắt người bác sĩ tự lập luận."
+},
+{
+"t0": 393.8,
+"t1": 396.8,
+"text": "Từ nay, khi đọc tin AI y tế giỏi hơn con người,"
+},
+{
+"t0": 397.2,
+"t1": 398.0,
+"text": "hãy hỏi bốn câu:"
+},
+{
+"t0": 398.8,
+"t1": 401.133,
+"text": "So sánh với bác sĩ chuyên khoa hay đa khoa?"
+},
+{
+"t0": 401.766,
+"t1": 404.066,
+"text": "Điều kiện làm bài có cho phép dùng tài liệu không?"
+},
+{
+"t0": 404.6,
+"t1": 406.966,
+"text": "Dữ liệu là bệnh nhân thật hay hồ sơ cũ?"
+},
+{
+"t0": 407.666,
+"t1": 409.366,
+"text": "Và ai là người soạn đề thi?"
+},
+{
+"t0": 410.466,
+"t1": 412.333,
+"text": "Với những người thiết kế hệ thống hội chẩn,"
+},
+{
+"t0": 412.766,
+"t1": 414.766,
+"text": "hãy chiếu quy trình của mình vào năm chiếc mũ"
+},
+{
+"t0": 415.066,
+"t1": 416.333,
+"text": "để tìm ra khâu bị thiếu."
+},
+{
+"t0": 416.966,
+"t1": 417.966,
+"text": "Và quyết định ngay từ đầu:"
+},
+{
+"t0": 418.333,
+"t1": 420.566,
+"text": "công cụ AI của bạn sẽ là một người gia sư"
+},
+{
+"t0": 420.866,
+"t1": 422.533,
+"text": "hay chỉ là một cỗ máy giải bài?"
+},
+{
+"t0": 423.566,
+"t1": 424.933,
+"text": "Sự xuất sắc của hệ thống AI"
+},
+{
+"t0": 425.266,
+"t1": 427.466,
+"text": "hiện tại đến từ một chi tiết rất con người:"
+},
+{
+"t0": 428.2,
+"t1": 430.766,
+"text": "nó thông minh lên nhờ biết cúi đầu bắt chước"
+},
+{
+"t0": 430.933,
+"t1": 432.166,
+"text": "cách các bác sĩ tổ chức,"
+},
+{
+"t0": 432.4,
+"t1": 434.166,
+"text": "phản biện và làm việc nhóm cùng nhau."
+},
+{
+"t0": 435.0,
+"t1": 436.1,
+"text": "Khi hệ thống này hoàn thiện,"
+},
+{
+"t0": 436.466,
+"t1": 438.533,
+"text": "nửa đêm tuyến dưới cần hỏi ai trước:"
+},
+{
+"t0": 439.166,
+"t1": 440.866,
+"text": "AI hay chờ chuyên gia tới sáng?"
+},
+{
+"t0": 441.5,
+"t1": 443.733,
+"text": "Và khi cỗ máy bất đồng quan điểm với chuyên gia,"
+},
+{
+"t0": 444.066,
+"t1": 445.266,
+"text": "quy định pháp lý ghi nhận"
+},
+{
+"t0": 445.466,
+"t1": 447.3,
+"text": "ai là người có quyền nói lời cuối cùng?"
+},
+{
+"t0": 448.4,
+"t1": 451.066,
+"text": "10 năm nữa, liệu bác sĩ đầu ngành của thế hệ sau"
+},
+{
+"t0": 451.166,
+"t1": 452.766,
+"text": "sẽ trưởng thành từ những tranh luận nảy"
+},
+{
+"t0": 452.933,
+"t1": 454.066,
+"text": "lửa với chuyên gia đi trước,"
+},
+{
+"t0": 454.766,
+"t1": 455.766,
+"text": "hay chỉ lớn lên"
+},
+{
+"t0": 455.9,
+"t1": 457.7,
+"text": "từ những câu trả lời có sẵn của máy móc?"
+},
+{
+"t0": 458.6,
+"t1": 460.5,
+"text": "Xin chào và hẹn gặp lại ở tập sau."
+}
+]
