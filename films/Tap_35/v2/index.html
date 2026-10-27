@@ -11,12 +11,15 @@ const GEO = await (await fetch('vn_geo.json')).json();
 window.DUR = 464.0;
 
 // ---------- palette ----------
+// light editorial theme: paper + ink, matching the illustrated B-roll
 const C = {
-  bg: '#07080c', s1: 'rgba(12,14,22,0.92)', s2: 'rgba(20,23,34,0.94)', s3: '#232838',
-  line: 'rgba(255,255,255,0.14)', t1: '#f3f5fa', t2: '#b9c0d0', t3: '#7a8296',
-  acc: '#8B7CFF', accD: '#2a2357', accSoft: 'rgba(139,124,255,0.22)', red: '#FF5A5F', redD: '#3a1418',
+  bg: '#F3EDE1', s1: 'rgba(255,253,248,0.96)', s2: '#FFFFFF', s3: '#E2DACB',
+  line: 'rgba(30,24,60,0.12)', t1: '#16141f', t2: '#4b4760', t3: '#8a8599',
+  acc: '#5B3FE0', accD: '#E9E3FF', accSoft: 'rgba(91,63,224,0.14)', red: '#E0353C', redD: '#FFE6E4', ink: '#16141f',
 };
-const F = 'Inter', FD = 'Inter Display', FM = 'JetBrains Mono';
+const F = 'Be Vietnam Pro', FD = 'Be Vietnam Pro', FM = 'Be Vietnam Pro';
+const FS = 1.28;          // global type scale (bigger text, no subtitles)
+let FIT = null;           // right edge that left-aligned text must not cross (set inside cards)
 
 // ---------- math ----------
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -36,7 +39,7 @@ function rr(x, y, w, h, r) { g.beginPath(); g.roundRect(x, y, w, h, r); }
 function panel(x, y, w, h, o = {}) {
   const a = o.a ?? 1; if (a <= 0) return;
   g.save(); g.globalAlpha *= a;
-  g.shadowColor = 'rgba(0,0,0,0.5)'; g.shadowBlur = 30; g.shadowOffsetY = 10;
+  g.shadowColor = 'rgba(40,30,80,0.22)'; g.shadowBlur = 34; g.shadowOffsetY = 12;
   rr(x, y, w, h, o.r ?? 16); g.fillStyle = o.fill || C.s1; g.fill();
   g.shadowColor = 'transparent';
   g.lineWidth = o.lw || 1.5; g.strokeStyle = o.stroke || C.line; g.stroke();
@@ -46,31 +49,34 @@ function panel(x, y, w, h, o = {}) {
 function tx(s, x, y, o = {}) {
   const a = o.a ?? 1; if (a <= 0) return 0;
   g.save(); g.globalAlpha *= a;
-  g.font = `${o.w || 500} ${o.size || 32}px "${o.f || F}"`;
-  g.fillStyle = o.c || C.t1; g.textAlign = o.al || 'left'; g.textBaseline = 'alphabetic';
+  let size = (o.size || 32) * (o.raw ? 1 : FS);
+  const al = o.al || 'left', maxW = o.maxW ?? (FIT && al === 'left' ? FIT - x : null);
+  g.font = `${o.w || 500} ${size}px "${o.f || F}"`;
   if (o.ls) g.letterSpacing = o.ls + 'px';
-  g.shadowColor = o.glow || 'rgba(0,0,0,0.55)'; g.shadowBlur = o.glow ? (o.gb || 40) : 8;
+  if (maxW && g.measureText(s).width > maxW) { size *= maxW / g.measureText(s).width; g.font = `${o.w || 500} ${size}px "${o.f || F}"`; }
+  g.fillStyle = o.c || C.t1; g.textAlign = al; g.textBaseline = 'alphabetic';
+  if (o.glow) { g.shadowColor = o.glow; g.shadowBlur = o.gb || 30; }
   g.fillText(s, x, y);
   const w = g.measureText(s).width; g.restore(); return w;
 }
-function tw(s, size, w = 500, f = F) { g.save(); g.font = `${w} ${size}px "${f}"`; const m = g.measureText(s).width; g.restore(); return m; }
+function tw(s, size, w = 500, f = F) { g.save(); g.font = `${w} ${size * FS}px "${f}"`; const m = g.measureText(s).width; g.restore(); return m; }
 function wrap(s, maxW, size, w = 500, f = F) {
-  g.save(); g.font = `${w} ${size}px "${f}"`; const words = s.split(' '), lines = []; let cur = '';
+  g.save(); g.font = `${w} ${size * FS}px "${f}"`; const words = s.split(' '), lines = []; let cur = '';
   for (const wd of words) { const tst = cur ? cur + ' ' + wd : wd; if (g.measureText(tst).width > maxW && cur) { lines.push(cur); cur = wd; } else cur = tst; }
   if (cur) lines.push(cur); g.restore(); return lines;
 }
-function label(s, x, y, o = {}) { return tx(s.toUpperCase(), x, y, { f: FM, size: o.size || 20, w: 600, c: o.c || C.t2, ls: 2.5, ...o }); }
+function label(s, x, y, o = {}) { return tx(s.toUpperCase(), x, y, { f: FM, size: o.size || 20, w: 700, c: o.c || C.t2, ls: 1.5, ...o }); }
 function line(x1, y1, x2, y2, c = C.line, w = 2, a = 1) { if (a <= 0) return; g.save(); g.globalAlpha *= a; g.strokeStyle = c; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); g.restore(); }
 function dot(x, y, r, c, a = 1, glow) { if (a <= 0 || r <= 0) return; g.save(); g.globalAlpha *= a; if (glow) { g.shadowColor = glow; g.shadowBlur = r * 3; } g.fillStyle = c; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); g.restore(); }
 function ring(x, y, r, c, w = 2, a = 1, dash) { if (a <= 0) return; g.save(); g.globalAlpha *= a; g.strokeStyle = c; g.lineWidth = w; if (dash) g.setLineDash(dash); g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); g.restore(); }
 function arc(x, y, r, a0, a1, c, w = 3, a = 1) { if (a <= 0) return; g.save(); g.globalAlpha *= a; g.strokeStyle = c; g.lineWidth = w; g.lineCap = 'round'; g.beginPath(); g.arc(x, y, r, a0, a1); g.stroke(); g.restore(); }
 function chip(s, x, y, o = {}) {
-  const size = o.size || 26, h = size * 1.9, w = tw(s, size, o.w || 600) + size * 1.4;
+  const size = o.size || 26, h = size * FS * 1.9, w = tw(s, size, o.w || 600) + size * FS * 1.4;
   const xx = o.al === 'center' ? x - w / 2 : o.al === 'right' ? x - w : x;
   const k = o.k ?? 1; if (k <= 0) return w;
   g.save(); g.translate(xx + w / 2, y + h / 2); g.scale(k, k); g.translate(-(xx + w / 2), -(y + h / 2));
   panel(xx, y, w, h, { r: h / 2, fill: o.fill || C.s2, stroke: o.stroke || C.line, glow: o.glow, a: o.a });
-  tx(s, xx + w / 2, y + h / 2 + size * .36, { size, w: o.w || 600, c: o.c || C.t1, al: 'center', a: o.a });
+  tx(s, xx + w / 2, y + h / 2 + size * FS * .36, { size, w: o.w || 600, c: o.c || C.t1, al: 'center', a: o.a });
   g.restore(); return w;
 }
 function check(x, y, s, k, c = C.acc) { if (k <= 0) return; g.save(); g.strokeStyle = c; g.lineWidth = 4; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
@@ -84,23 +90,25 @@ function scramble(val, t0, dur = .9) {
   const p = (T - t0) / dur; if (p >= 1) return val;
   return val.split('').map((ch, i) => (!/[0-9]/.test(ch) || p > (i + 1) / (val.length + 1)) ? ch : String(Math.floor(hash(Math.floor(T * 24) + i * 7) * 10))).join('');
 }
-function bigNum(s, x, y, size, o = {}) { return tx(s, x, y, { f: FD, w: 700, size, ls: -size * .03, al: o.al || 'center', c: o.c || C.t1, glow: o.glow || 'rgba(0,0,0,.6)', gb: o.gb || 50, a: o.a }); }
+function bigNum(s, x, y, size, o = {}) { return tx(s, x, y, { f: FD, w: 800, size, raw: true, ls: -size * .03, al: o.al || 'center', c: o.c || C.t1, a: o.a }); }
 
 // ---- broadcast components ----
 // lower third: kicker + title (+ sub), slides in from the left on an accent bar
 function lowerThird(kicker, title, t0, t1, o = {}) {
   const a = LIVE(t0, t1, .35); if (a <= 0) return;
-  const x = o.x ?? 96, y = o.y ?? 690, size = o.size || 46;
-  const w = Math.max(tw(title, size, 750), kicker ? tw(kicker.toUpperCase(), 20, 600, FM) + kicker.length * 2.5 : 0) + 80;
-  const sl = eo(P(t0, .45)); const ww = w * sl;
+  const x = o.x ?? 96, size = o.size || 46, S = size * FS, sub = o.sub && o.sub.trim() ? o.sub : null;
+  const kw = kicker ? tw(kicker.toUpperCase(), 20, 700) + kicker.length * 1.5 + 36 : 0;
+  const w = Math.min(1728, Math.max(tw(title, size, 800), sub ? tw(sub, 28, 500) : 0, kw) + 84);
+  const bh = S * 1.5 + (sub ? 28 * FS * 1.5 : 0) + 24, y = (o.y ?? 930) - bh;     // anchored to the bottom
+  const ww = w * eo(P(t0, .45));
   g.save(); g.globalAlpha = a;
-  g.beginPath(); g.rect(x, y - 60, ww + 10, 200); g.clip();
-  rr(x, y - 10, w, size * 1.55 + (o.sub ? 52 : 0) + 20, 10); g.fillStyle = 'rgba(10,11,18,0.86)'; g.fill();
-  g.fillStyle = o.c || C.acc; g.fillRect(x, y - 10, 8, size * 1.55 + (o.sub ? 52 : 0) + 20);
-  if (kicker) { rr(x, y - 48, tw(kicker.toUpperCase(), 20, 600, FM) + kicker.length * 2.5 + 32, 36, 6); g.fillStyle = o.c || C.acc; g.fill();
-    tx(kicker.toUpperCase(), x + 16, y - 23, { f: FM, size: 20, w: 600, c: '#0b0b14', ls: 2.5 }); }
-  tx(title, x + 36, y + size * 1.05, { size, w: 750 });
-  if (o.sub) tx(o.sub, x + 36, y + size * 1.05 + 52, { size: 28, w: 500, c: C.t2 });
+  g.beginPath(); g.rect(x - 20, y - 80, ww + 40, bh + 120); g.clip();
+  panel(x, y, w, bh, { r: 14, fill: C.s2, stroke: 'rgba(0,0,0,0)' });
+  g.fillStyle = o.c || C.acc; g.fillRect(x, y, 10, bh);
+  if (kicker) { rr(x, y - 22 * FS - 26, kw, 22 * FS + 18, 8); g.fillStyle = o.c || C.acc; g.fill();
+    tx(kicker.toUpperCase(), x + 18, y - 22, { size: 20, w: 700, c: '#fff', ls: 1.5 }); }
+  tx(title, x + 40, y + 12 + S * 1.02, { size, w: 800, maxW: w - 70 });
+  if (sub) tx(sub, x + 40, y + 12 + S * 1.02 + 28 * FS * 1.4, { size: 28, w: 500, c: C.t2, maxW: w - 70 });
   g.restore();
 }
 // callout card anchored on the right
@@ -109,16 +117,16 @@ function card(x, y, w, h, t0, t1, draw, o = {}) {
   const k = .94 + .06 * back(P(t0, .4));
   g.save(); g.globalAlpha = a; g.translate(x + w / 2, y + h / 2); g.scale(k, k); g.translate(-x - w / 2, -y - h / 2);
   panel(x, y, w, h, { fill: o.fill || C.s1, stroke: o.stroke || C.line, glow: o.glow });
-  draw(x, y, w, h);
+  FIT = x + w - 28; draw(x, y, w, h); FIT = null;
   g.restore();
 }
 function stamp(s, x, y, t0, t1, o = {}) {
   const a = LIVE(t0, t1, .25); if (a <= 0) return;
   const k = lerp(1.6, 1, eo(P(t0, .25))), size = o.size || 64, c = o.c || C.red;
-  const w = tw(s, size, 800) + 70, h = size * 1.6;
+  const w = tw(s, size, 800) / FS + 70, h = size * 1.6;
   g.save(); g.globalAlpha = a; g.translate(x, y); g.rotate(o.rot ?? -.06); g.scale(k, k);
-  rr(-w / 2, -h / 2, w, h, 12); g.fillStyle = o.fill || 'rgba(20,6,8,.78)'; g.fill(); g.lineWidth = 5; g.strokeStyle = c; g.stroke();
-  tx(s, 0, size * .36, { size, w: 800, c, al: 'center' }); g.restore();
+  rr(-w / 2, -h / 2, w, h, 12); g.fillStyle = o.fill || '#fff'; g.fill(); g.lineWidth = 6; g.strokeStyle = c; g.stroke();
+  tx(s, 0, size * .36, { size, w: 800, c, al: 'center', raw: true }); g.restore();
 }
 function hat(x, y, s, c = C.acc, a = 1) { if (a <= 0) return; g.save(); g.globalAlpha *= a; g.translate(x, y); g.scale(s, s); rr(-30, -6, 60, 14, 4); g.fillStyle = c; g.fill(); rr(-18, -24, 36, 20, 5); g.fill(); g.restore(); }
 function person(x, y, s, c = C.t2, a = 1) { if (a <= 0) return; g.save(); g.globalAlpha *= a; g.translate(x, y); g.scale(s, s); dot(0, -14, 14, c); g.beginPath(); g.arc(0, 26, 24, Math.PI, 0); g.fillStyle = c; g.fill(); g.restore(); }
@@ -149,40 +157,35 @@ function drawFootage(img, t, mode, prm) {
   const z = 1.02 + .06 * (i % 2 ? q : 1 - q), px = dir * 22 * (q - .5);
   if (mode === 'full' || mode === 'blur') {
     g.save();
-    if (mode === 'blur') g.filter = 'blur(14px) brightness(0.42) saturate(0.8)';
+    if (mode === 'blur') g.filter = 'blur(18px) saturate(0.6)';
     const zw = W * z * (mode === 'blur' ? 1.06 : 1), zh = H * z * (mode === 'blur' ? 1.06 : 1);
     g.drawImage(img, (W - zw) / 2 + px, (H - zh) / 2, zw, zh);
     g.restore();
-    if (mode === 'full') {
-      let gr = g.createLinearGradient(0, 520, 0, H); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,0.78)'); g.fillStyle = gr; g.fillRect(0, 520, W, H - 520);
-      gr = g.createLinearGradient(0, 0, 0, 200); gr.addColorStop(0, 'rgba(0,0,0,0.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, 200);
-    }
+    if (mode === 'blur') { g.fillStyle = 'rgba(243,237,225,0.78)'; g.fillRect(0, 0, W, H); }
   } else {   // pip window
     stage();
     const { x, y, w } = prm, h = w * 9 / 16;
-    g.save(); g.shadowColor = 'rgba(0,0,0,.7)'; g.shadowBlur = 50; g.shadowOffsetY = 18; rr(x, y, w, h, 18); g.fillStyle = '#000'; g.fill(); g.restore();
+    g.save(); g.shadowColor = 'rgba(40,30,80,.28)'; g.shadowBlur = 50; g.shadowOffsetY = 18; rr(x, y, w, h, 18); g.fillStyle = '#fff'; g.fill(); g.restore();
     g.save(); rr(x, y, w, h, 18); g.clip(); const zw = w * z, zh = h * z; g.drawImage(img, x + (w - zw) / 2 + px * w / W, y + (h - zh) / 2, zw, zh); g.restore();
-    rr(x, y, w, h, 18); g.strokeStyle = 'rgba(255,255,255,.22)'; g.lineWidth = 2; g.stroke();
+    rr(x - 8, y - 8, w + 16, h + 16, 24); g.strokeStyle = '#fff'; g.lineWidth = 10; g.stroke();
   }
 }
 function stage() {
   g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
-  const gr = g.createRadialGradient(W * .5, -100, 50, W * .5, -100, 1300); gr.addColorStop(0, 'rgba(70,80,120,0.25)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
-  g.save(); g.lineWidth = 1; for (let x = 0, i = 0; x < W; x += 48, i++) { g.strokeStyle = i % 4 ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.05)'; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
-  for (let y = 0, i = 0; y < H; y += 48, i++) { g.strokeStyle = i % 4 ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.05)'; g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); } g.restore();
+  g.save(); g.fillStyle = 'rgba(60,40,20,0.035)'; for (let i = 0; i < 1400; i++) g.fillRect(hash(i) * W, hash(i + 9e3) * H, 2, 2); g.restore();   // paper tooth
 }
 
 // ---------- persistent bug (top-left) ----------
-const CHAPTERS = [[0, 'Hội chẩn'], [62.9, 'MAI-DxO'], [108.7, 'Bản chất'], [157.1, 'Bóc tách số liệu'], [254.2, 'Việt Nam'], [322.5, 'Ba ranh giới'], [393.8, 'Bốn câu hỏi'], [423.6, 'Kết']];
+const CHAPTERS = [[0, 'Hội chẩn'], [62.9, 'MAI-DxO'], [108.7, 'Bản chất'], [157.1, 'Bóc tách số liệu'], [254.2, 'Việt Nam'], [282.8, 'Ba vị trí của AI'], [322.5, 'Ba ranh giới'], [393.8, 'Bốn câu hỏi'], [423.6, 'Kết']];
 function bug(t) {
   let ch = CHAPTERS[0], ci = 0; CHAPTERS.forEach((c, i) => { if (t >= c[0]) { ch = c; ci = i; } });
   const a = clamp((t - .4) / .4) * clamp((462.5 - t) / .5);
   g.save(); g.globalAlpha = a;
-  rr(56, 44, 22, 22, 5); g.fillStyle = C.acc; g.fill();
-  label('Tập 35 · AI & Y tế', 92, 63, { c: C.t1, size: 18 });
+  rr(56, 40, 300, 30 * FS, 6); g.fillStyle = C.acc; g.fill();
+  label('Tập 35 · AI & Y tế', 72, 69, { c: '#fff', size: 18 });
   const k = eo((t - ch[0]) / .5), w = tw(ch[1].toUpperCase(), 18, 600, FM) + ch[1].length * 2.5 + 28;
-  rr(56, 80, w * k, 30, 6); g.fillStyle = 'rgba(10,11,18,.75)'; g.fill();
-  if (k > .5) label(ch[1], 70, 101, { size: 18, c: C.acc, a: (k - .5) * 2 });
+  rr(56, 80, w * k, 30 * FS, 6); g.fillStyle = 'rgba(255,255,255,.92)'; g.fill();
+  if (k > .5) label(ch[1], 70, 109, { size: 18, c: C.acc, a: (k - .5) * 2 });
   g.restore();
 }
 
@@ -196,11 +199,11 @@ function seatRail(t0, t1, act, o = {}) {
   for (let i = 0; i < 5; i++) {
     const y = y0 + i * 108, on = act(i), k = IN(t0 + i * .15, .35);
     g.save(); g.translate(x, y); g.scale(k, k);
-    dot(0, 0, 44, on > .5 ? C.accD : 'rgba(10,11,18,.82)'); ring(0, 0, 44, on > 0 ? C.acc : 'rgba(255,255,255,.3)', on > 0 ? 3.5 : 1.5);
+    dot(0, 0, 44, on > .5 ? C.accD : C.s2); ring(0, 0, 44, on > 0 ? C.acc : 'rgba(30,24,60,.3)', on > 0 ? 3.5 : 1.5);
     if (on > 0) ring(0, 0, 44 + 10 * on, C.acc, 2, .5 * on);
     if (o.hats) hat(0, -4, .9, C.acc, 1); else person(0, 0, .85, on > 0 ? C.acc : C.t2);
     g.restore();
-    tx(o.hats ? ROLES[i] : 'Người ' + String(i + 1).padStart(2, '0'), x - 64, y + 9, { size: 22, w: 650, al: 'right', c: on > 0 ? C.t1 : C.t2, a: k });
+    chip(o.hats ? ROLES[i] : 'Người ' + String(i + 1).padStart(2, '0'), x - 60, y - 22, { size: 20, w: 700, al: 'right', k, fill: on > 0 ? C.acc : C.s2, c: on > 0 ? '#fff' : C.t1, stroke: 'rgba(0,0,0,0)' });
   }
   g.restore();
 }
@@ -214,7 +217,7 @@ function ovCouncil() {
   card(cx, cy, cw, 230, 7.9, 11.6, (x, y) => {
     label('Người 01 · ba khả năng cao nhất', x + 32, y + 50, { c: C.acc });
     [['A', .58], ['B', .27], ['C', .15]].forEach(([n, v], j) => { const yy = y + 90 + j * 46, k = EO(8.3 + j * .35, .6);
-      tx('Giả thuyết ' + n, x + 32, yy + 22, { size: 26, w: 650, a: k }); rr(x + 260, yy + 4, 440, 24, 8); g.fillStyle = 'rgba(255,255,255,.08)'; g.fill();
+      tx('Giả thuyết ' + n, x + 32, yy + 22, { size: 26, w: 650, a: k }); rr(x + 260, yy + 4, 440, 24, 8); g.fillStyle = 'rgba(30,24,60,.08)'; g.fill();
       rr(x + 260, yy + 4, 440 * v * k, 24, 8); g.fillStyle = j ? '#5c6380' : C.acc; g.fill(); });
   });
   card(cx, cy, cw, 230, 11.8, 18.0, (x, y) => {
@@ -241,8 +244,8 @@ function ovCouncil() {
   card(cx, cy, cw, 230, 40.2, 46.2, (x, y) => {
     label('Sau vài vòng tranh luận', x + 32, y + 50);
     for (let r = 0; r < 3; r++) chip('Vòng ' + (r + 1), x + 32 + r * 160, y + 76, { k: IN(40.4 + r * .5), size: 24, fill: r === 2 ? C.accD : C.s2 });
-    const k = IN(43.0, .4); if (k > 0) { g.save(); g.translate(x + 32, y + 150); g.scale(k, k); chip('ĐÃ CHỐT CHẨN ĐOÁN', 0, 0, { size: 30, w: 800, fill: C.acc, c: '#0b0b14', stroke: C.acc }); g.restore(); }
-  }, { glow: T > 43 ? 'rgba(139,124,255,.6)' : null });
+    const k = IN(43.0, .4); if (k > 0) { g.save(); g.translate(x + 32, y + 150); g.scale(k, k); chip('ĐÃ CHỐT CHẨN ĐOÁN', 0, 0, { size: 30, w: 800, fill: C.acc, c: '#fff', stroke: C.acc }); g.restore(); }
+  }, { glow: T > 43 ? 'rgba(91,63,224,.6)' : null });
 }
 
 function ovTwist() {
@@ -250,7 +253,8 @@ function ovTwist() {
   stamp('0 BÁC SĨ', 960, 470, 51.3, 54.4, { size: 96 });
   if (T > 54.5 && T < 57.3) { const a = LIVE(54.5, 57.3);
     for (let i = 0; i < 5; i++) { const x = 560 + i * 200; g.save(); g.globalAlpha = a; panel(x - 60, 380, 120, 120, { r: 16, fill: C.s2 }); cross(x, 440, 34, P(55.3 + i * .12, .3)); g.restore(); }
-    tx('Không phải năm cỗ máy tách biệt', 960, 600, { size: 46, w: 750, al: 'center', a }); }
+    g.save(); g.globalAlpha = a; rr(460, 545, 1000, 90, 14); g.fillStyle = C.s2; g.fill(); g.restore();
+    tx('Không phải năm cỗ máy tách biệt', 960, 606, { size: 40, w: 800, al: 'center', a }); }
   if (T > 57.3) {
     lowerThird('Sự thật', 'Một model AI · đội lần lượt năm chiếc mũ', 57.5, 62.8, { sub: 'tự cãi nhau với chính mình' });
     seatRail(57.6, 62.8, i => (T > 61 && Math.floor((T - 61) * 2.4) % 5 === i) ? 1 : 0, { hats: true });
@@ -262,11 +266,11 @@ function ovMaiDxO() {
   lowerThird('Công bố tuần này', 'Tạp chí Science', 66.6, 71.2, { sub: 'Kết quả khiến ngành y bàn tán' });
   if (T >= 71.3 && T < 78.7) {
     label('Tỷ lệ chẩn đoán đúng · ca bệnh khó', 960, 260, { al: 'center', a: EO(71.4), c: C.t1, size: 24 });
-    bigNum(scramble('83%', 71.8, 1.0), 600, 600, 300, { a: EO(71.5), c: C.acc, glow: 'rgba(139,124,255,.7)' });
+    bigNum(scramble('83%', 71.8, 1.0), 600, 600, 300, { a: EO(71.5), c: C.acc, glow: 'rgba(91,63,224,.7)' });
     label('AI · MAI-DxO', 600, 700, { al: 'center', a: EO(71.9), c: C.acc, size: 26 });
     bigNum(scramble('36%', 75.7, 1.0), 1320, 600, 300, { a: EO(75.5), c: C.t1 });
     label('Bác sĩ', 1320, 700, { al: 'center', a: EO(75.8), size: 26 });
-    line(960, 380, 960, 680, 'rgba(255,255,255,.18)', 2, EO(75.4));
+    line(960, 380, 960, 680, 'rgba(30,24,60,.18)', 2, EO(75.4));
   }
 }
 
@@ -280,22 +284,22 @@ function ovRecall() {   // pip window left, panel right
     tx('nhưng chưa từng bước vào', cx + 32, cy + 200, { size: 32, w: 600, c: C.t2, a: EO(89.9) });
     tx('bất kỳ phòng khám nào', cx + 32, cy + 244, { size: 32, w: 700, c: C.red, a: EO(90.8) });
   });
-  label('Tư liệu minh hoạ', 80, 770, { size: 16, c: C.t3 });
+
 }
 
 function ovQuestion() {
   if (T < 100.4) {
     const a = LIVE(93.7, 100.3);
     g.save(); g.globalAlpha = a;
-    rr(360, 300, 1200, 330, 20); g.fillStyle = 'rgba(8,9,14,.82)'; g.fill();
-    bigNum('83%', 960, 430, 110, { c: C.acc, glow: 'rgba(139,124,255,.6)' });
+    rr(360, 300, 1200, 330, 20); g.fillStyle = C.s1; g.fill();
+    bigNum('83%', 960, 430, 110, { c: C.acc, glow: 'rgba(91,63,224,.6)' });
     tx('“AI sắp thay bác sĩ chưa?”', 960, 530, { size: 54, w: 700, al: 'center', c: T > 98.2 ? C.t3 : C.t1 });
     strike(960 - tw('“AI sắp thay bác sĩ chưa?”', 54, 700) / 2 - 10, 512, tw('“AI sắp thay bác sĩ chưa?”', 54, 700) + 20, P(98.3, .4));
     chip('Bóc tách thống kê này', 960, 560, { al: 'center', k: IN(98.8), size: 30, fill: C.accD, stroke: C.acc, glow: C.acc });
     g.restore();
   }
   lowerThird('Và quan trọng hơn', 'Hội đồng ảo trong mạng lưới hội chẩn từ xa', 100.6, 106.1, { sub: 'tại Việt Nam' });
-  if (T > 106.2) { const a = LIVE(106.2, 108.7); g.save(); g.globalAlpha = a; rr(310, 420, 1300, 150, 20); g.fillStyle = 'rgba(8,9,14,.82)'; g.fill(); g.restore();
+  if (T > 106.2) { const a = LIVE(106.2, 108.7); g.save(); g.globalAlpha = a; rr(310, 420, 1300, 150, 20); g.fillStyle = C.s1; g.fill(); g.restore();
     tx('Vai trò của con người sẽ nằm ở đâu?', 960, 516, { size: 56, w: 750, al: 'center', a }); }
 }
 
@@ -308,16 +312,16 @@ function ovOrchestrator() {
     label('Bộ điều phối MAI-DxO', 96, 190, { c: C.acc, size: 22 });
     tx('Năm chiếc mũ trên một model', 96, 250, { size: 48, w: 750 });
     // base model block
-    panel(96, 780, 1744, 110, { fill: '#15122a', stroke: C.acc, a: EO(120.2) });
-    tx('MODEL NỀN DUY NHẤT', 968, 848, { size: 34, w: 750, al: 'center', ls: 2, a: EO(120.4) });
+    panel(96, 780, 1744, 110, { fill: C.acc, stroke: C.acc, a: EO(120.2) });
+    tx('MODEL NỀN DUY NHẤT', 968, 852, { size: 34, w: 800, al: 'center', ls: 2, c: '#fff', a: EO(120.4) });
     HATS.forEach(([n, t], i) => {
       const x = 270 + i * 345, y = 560, k = IN(t - .25, .35), lit = clamp((T - t) / .3);
       line(x, y + 70, x, 780, C.acc, 2, k * .4);
       if (i < 4) line(x + 150, y, x + 195, y, C.acc, 3, P(t + .3, .3) * .7);
       if (k <= 0) return;
       g.save(); g.translate(x, y); g.scale(k, k);
-      panel(-150, -80, 300, 160, { fill: lit > .5 ? C.accD : C.s1, stroke: lit > 0 ? C.acc : C.line, glow: (T > t && T < t + 1.6) ? 'rgba(139,124,255,.7)' : null });
-      hat(0, -30, 1.1, C.acc, .6 + .4 * lit); tx('BS ' + n, 0, 44, { size: 26, w: 700, al: 'center' }); g.restore();
+      panel(-150, -80, 300, 160, { fill: lit > .5 ? C.accD : C.s1, stroke: lit > 0 ? C.acc : C.line, glow: (T > t && T < t + 1.6) ? 'rgba(91,63,224,.7)' : null });
+      hat(0, -30, 1.1, C.acc, .6 + .4 * lit); tx('BS ' + n, 0, 44, { size: 26, w: 700, al: 'center', maxW: 270 }); g.restore();
     });
     // flow dot
     if (T > 121) { const q = ((T - 121) * .35) % 1; dot(270 + q * 1380, 560 - 96, 7, C.acc, 1, C.acc); }
@@ -332,7 +336,7 @@ function ovOrchestrator() {
   if (T > 146.3) {
     lowerThird('Phương pháp', 'Không dạy AI làm bác sĩ', 146.5, 150.4, { sub: 'mà sao chép quy trình của hội đồng chuyên môn con người' });
     if (T > 150.5) { const a = LIVE(150.5, 157.0);
-      g.save(); g.globalAlpha = a; rr(96, 620, 1280, 200, 16); g.fillStyle = 'rgba(8,9,14,.84)'; g.fill(); g.restore();
+      g.save(); g.globalAlpha = a; rr(96, 620, 1280, 200, 16); g.fillStyle = C.s1; g.fill(); g.restore();
       for (let i = 0; i < 5; i++) { const x = 190 + i * 250, k = IN(150.8 + i * .2) * a;
         person(x, 690, .9, C.t2, k); line(x, 730, x, 760, C.acc, 2, k); hat(x, 790, .9, C.acc, k); }
       tx('Phân vai để triệt tiêu điểm mù của máy móc', 1420, 730, { size: 30, w: 650, a: EO(154.2) * a }); }
@@ -350,7 +354,7 @@ function ovQ1() {
     label('Câu hỏi 1/3 · Điều kiện làm bài', 160, 200, { c: C.acc, size: 22, a: EO(175) });
     tx('Điều kiện làm bài quan trọng thế nào', 160, 260, { size: 50, w: 750, a: EO(175.1) });
     const bx = 260, by = 860, bh = 500, bw = 200;
-    for (let v = 0; v <= 100; v += 25) { line(bx - 40, by - v / 100 * bh, bx + 820, by - v / 100 * bh, 'rgba(255,255,255,.1)', 1); label(v + '%', bx - 56, by - v / 100 * bh + 7, { al: 'right', size: 16 }); }
+    for (let v = 0; v <= 100; v += 25) { line(bx - 40, by - v / 100 * bh, bx + 820, by - v / 100 * bh, 'rgba(30,24,60,.1)', 1); label(v + '%', bx - 56, by - v / 100 * bh + 7, { al: 'right', size: 16 }); }
     const open = EO(194.0, 1.6), doc = T < 185.2 ? 0 : lerp(20 * EO(185.2, .7), 36, open), ai = 83 * EO(176.5, .8);
     [['AI · MAI-DxO', ai, C.acc], ['Bác sĩ', doc, open > .1 ? C.t1 : C.red]].forEach(([n, v, c], i) => {
       const x = bx + 80 + i * 420; rr(x, by - v / 100 * bh, bw, v / 100 * bh, 10); g.fillStyle = c; g.fill();
@@ -375,18 +379,18 @@ function ovQ2() {
   lowerThird('Câu hỏi 2/3', 'Ca thật hay ca mô phỏng?', 203.3, 207.0, { c: C.red });
   if (T > 207.2 && T < 217.6) {
     const a = LIVE(207.2, 217.6);
-    g.save(); g.globalAlpha = a; rr(96, 300, 760, 520, 16); g.fillStyle = 'rgba(8,9,14,.85)'; g.fill(); g.restore();
+    g.save(); g.globalAlpha = a; rr(96, 300, 760, 520, 16); g.fillStyle = C.s1; g.fill(); g.restore();
     bigNum(scramble('304', 207.4, .9), 140, 440, 150, { al: 'left', a, c: C.acc });
     tx('ca bệnh · dữ liệu cũ', 140, 500, { size: 34, w: 650, a });
     const toText = P(211.9, 1.6);
     for (let i = 0; i < 304; i++) { const c = i % 38, r = Math.floor(i / 38), k = P(207.4 + i * .004, .2); if (k <= 0) continue;
-      const tt = clamp(toText * 1.6 - hash(i) * .6); rr(140 + c * 18, 540 + r * 18, 14 * k, 14 * k, 3); g.fillStyle = tt > .5 ? C.acc : 'rgba(255,255,255,.35)'; g.globalAlpha = a; g.fill(); g.globalAlpha = 1; }
+      const tt = clamp(toText * 1.6 - hash(i) * .6); rr(140 + c * 18, 540 + r * 18, 14 * k, 14 * k, 3); g.fillStyle = tt > .5 ? C.acc : 'rgba(30,24,60,.35)'; g.globalAlpha = a; g.fill(); g.globalAlpha = 1; }
     chip('New England Journal of Medicine', 140, 700, { k: IN(210.0) * a, size: 22 });
     chip('→ bài thi tương tác bằng chữ', 140, 760, { k: IN(212.0) * a, size: 22, stroke: C.acc });
     if (T > 214.6) stamp('KHÔNG PHẢI BỆNH NHÂN THẬT', 1350, 480, 214.8, 217.6, { size: 40 });
   }
-  if (T > 217.7 && T < 222.3) { const a = LIVE(217.7, 222.2); g.save(); g.globalAlpha = a; rr(96, 330, 640, 330, 16); g.fillStyle = 'rgba(8,9,14,.85)'; g.fill(); g.restore();
-    bigNum(scramble('80%', 217.9, .8), 140, 520, 180, { al: 'left', c: C.acc, a, glow: 'rgba(139,124,255,.6)' });
+  if (T > 217.7 && T < 222.3) { const a = LIVE(217.7, 222.2); g.save(); g.globalAlpha = a; rr(96, 330, 640, 330, 16); g.fillStyle = C.s1; g.fill(); g.restore();
+    bigNum(scramble('80%', 217.9, .8), 140, 520, 180, { al: 'left', c: C.acc, a, glow: 'rgba(91,63,224,.6)' });
     tx('đúng · dữ liệu cấp cứu cũ ở Boston', 140, 600, { size: 30, w: 600, a }); }
   lowerThird('Lãnh đạo mảng AI · Microsoft thừa nhận', 'Vẫn chờ thử nghiệm lâm sàng thực tế', 222.5, 229.5, { sub: 'tại bệnh viện Beth Israel' });
   stamp('CHƯA ĐƯỢC PHÉP DÙNG ĐỂ CHỮA BỆNH', 960, 460, 229.8, 232.0, { size: 50 });
@@ -422,11 +426,11 @@ function ovVietnam() {
   if (a > 0) {
     g.save(); g.globalAlpha = a;
     g.save(); rr(80, 140, 1000, 900, 20); g.clip();
-    g.fillStyle = 'rgba(14,22,40,.55)'; g.fillRect(80, 140, 1000, 900);
-    for (const n of ['China', 'Laos', 'Cambodia', 'Thailand', 'Myanmar', 'Malaysia', 'Philippines', 'Taiwan']) drawPolys(GEO[n], pr, 'rgba(255,255,255,.07)', 'rgba(255,255,255,.12)');
-    drawPolys(GEO['Vietnam'], pr, 'rgba(139,124,255,.32)', C.acc, 1.6);
+    g.fillStyle = 'rgba(255,253,248,.9)'; g.fillRect(80, 140, 1000, 900);
+    for (const n of ['China', 'Laos', 'Cambodia', 'Thailand', 'Myanmar', 'Malaysia', 'Philippines', 'Taiwan']) drawPolys(GEO[n], pr, 'rgba(30,24,60,.07)', 'rgba(30,24,60,.12)');
+    drawPolys(GEO['Vietnam'], pr, 'rgba(91,63,224,.62)', C.acc, 2);
     for (const k of ['Hoang Sa', 'Truong Sa']) for (const r of GEO[k]) { let sx = 0, sy = 0; r.forEach(p => { const [x, y] = pr(p); sx += x; sy += y; }); dot(sx / r.length, sy / r.length, 4, '#fff', 1, C.acc); }
-    const isl = (lonlat, r, n, dx) => { const [x, y] = pr(lonlat); ring(x, y, r, C.acc, 1.5, 1, [4, 4]); label(n, x + dx, y + 6, { size: 17, c: C.t1, al: dx < 0 ? 'right' : 'left' }); };
+    const isl = (lonlat, r, n, dx) => { const [x, y] = pr(lonlat); ring(x, y, r, C.acc, 1.5, 1, [4, 4]); label(n, x + dx, y + 6, { size: 18, c: C.ink, al: dx < 0 ? 'right' : 'left' }); };
     isl([112.0, 16.4], 50, 'QĐ Hoàng Sa (Việt Nam)', 58); isl([114.3, 9.8], 80, 'QĐ Trường Sa (Việt Nam)', -90);
     g.restore();
     // nodes: >1.000 bridge points (illustrative positions, sampled inside the mainland)
@@ -437,18 +441,18 @@ function ovVietnam() {
     for (let i = 0; i < 2000 && n < 260; i++) { const lon = 102.2 + hash(i * 1.37) * 7.3, lat = 8.6 + hash(i * 2.71) * 14.7, [x, y] = pr([lon, lat]);
       if (!g.isPointInPath(path, x, y)) continue; n++; const k = clamp(nk * 1.5 - hash(i) * .5); if (k <= 0) continue;
       const hub = lat > 15.5 ? HN : HCM, pulse = T > 266.8 ? clamp(1 - Math.abs(((T - 266.8) * .5 + hash(i * 9)) % 1 - .5) * 3) : 0;
-      if (pulse > 0) line(x, y, hub[0], hub[1], 'rgba(200,190,255,.6)', 1, pulse * .5);
+      if (pulse > 0) line(x, y, hub[0], hub[1], 'rgba(91,63,224,.6)', 1, pulse * .5);
       dot(x, y, 2.6, C.t1, k); }
     [[COTO, 'Cô Tô', 264.8, HN, 14], [TS, 'Trường Sa', 264.2, HCM, -110]].forEach(([p, nm, t, hub, dx]) => { const k = IN(t); dot(p[0], p[1], 7 * k, '#fff', k, C.acc);
-      if (T > 266.8) { const q = ((T - 266.8) * .4) % 1; line(p[0], p[1], hub[0], hub[1], 'rgba(200,190,255,.55)', 1.5); dot(lerp(p[0], hub[0], q), lerp(p[1], hub[1], q), 5, '#fff', 1, C.acc); } });
+      if (T > 266.8) { const q = ((T - 266.8) * .4) % 1; line(p[0], p[1], hub[0], hub[1], 'rgba(91,63,224,.55)', 1.5); dot(lerp(p[0], hub[0], q), lerp(p[1], hub[1], q), 5, '#fff', 1, C.acc); } });
     [[HN, 'Hà Nội', -18], [HCM, 'TP. Hồ Chí Minh', -18]].forEach(([p, nm, dx]) => { const k = IN(267.6); dot(p[0], p[1], 13 * k, '#fff', k, C.acc); tx(nm, p[0] + dx, p[1] + 8, { size: 24, w: 700, al: 'right', a: k }); });
     label('Bản đồ: Natural Earth · minh hoạ', 100, 1020, { size: 14, c: C.t3 });
     // right column
     const rx = 1160;
     panel(rx, 160, 680, 170, { a: EO(255.7), fill: C.s1 });
     label('Khung pháp lý', rx + 36, 210, { a: EO(255.7), c: C.acc });
-    tx('Quyết định 2628 · năm 2020', rx + 36, 282, { size: 40, w: 750, a: EO(256.6) });
-    bigNum(scramble('1.000+', 261.8, 1.0), rx, 470, 130, { al: 'left', a: EO(261.7), c: C.acc, glow: 'rgba(139,124,255,.5)' });
+    tx('Quyết định 2628 · năm 2020', rx + 36, 282, { size: 40, w: 800, maxW: 610, a: EO(256.6) });
+    bigNum(scramble('1.000+', 261.8, 1.0), rx, 470, 130, { al: 'left', a: EO(261.7), c: C.acc, glow: 'rgba(91,63,224,.5)' });
     tx('điểm cầu y tế từ xa', rx + 6, 525, { size: 32, w: 600, a: EO(262.0) });
     tx('Tuyến huyện · Trường Sa · Cô Tô', rx + 6, 600, { size: 28, w: 500, c: C.t2, a: EO(263.6) });
     tx('→ bệnh viện trung ương', rx + 6, 645, { size: 28, w: 600, a: EO(267.0) });
@@ -477,14 +481,14 @@ function ovPositions() {
   for (let j = 0; j < 4; j++) { const t = 301.8 + j * .9, k = IN(t, .35) * LIVE(296.6, 306.1); if (k <= 0) continue;
     g.save(); g.translate(1360 + (j % 2) * 220, 280 + Math.floor(j / 2) * 150); g.scale(k, k); panel(-70, -50, 140, 100, { r: 24, fill: C.accD, stroke: C.acc }); tx('?', 0, 24, { size: 64, w: 800, al: 'center', c: C.t1 }); g.restore(); }
   lowerThird('Vị trí 03', 'Hỗ trợ phân luồng', 306.5, 314.0, { sub: 'ca nào cần đẩy lên · ca nào xử lý tại chỗ' });
-  if (T > 308.8 && T < 314.1) { const a = LIVE(308.8, 314.0); g.save(); g.globalAlpha = a; rr(1180, 200, 660, 360, 16); g.fillStyle = 'rgba(8,9,14,.86)'; g.fill(); g.restore();
+  if (T > 308.8 && T < 314.1) { const a = LIVE(308.8, 314.0); g.save(); g.globalAlpha = a; rr(1180, 200, 660, 360, 16); g.fillStyle = C.s1; g.fill(); g.restore();
     label('Lên hội chẩn', 1810, 260, { al: 'right', c: C.acc, a }); label('Xử lý tại chỗ', 1810, 530, { al: 'right', a: a * EO(312.1) });
     for (let j = 0; j < 12; j++) { const t0 = 309.0 + j * .4, q = clamp((T - t0) / 1.2); if (q <= 0) continue; const up = hash(j * 7) > .6;
       dot(1220 + q * 420, 390 + (q > .45 ? (up ? -1 : 1) * (q - .45) * 240 : 0), 10, up ? C.acc : C.t1, clamp((1.3 - q) * 3) * a); } }
   if (T > 314.1) {
     const a = LIVE(314.1, 322.4);
-    g.save(); g.globalAlpha = a; rr(160, 230, 1600, 170, 16); g.fillStyle = 'rgba(8,9,14,.82)'; g.fill(); g.restore();
-    const y = 315; line(330, y, 1590, y, 'rgba(255,255,255,.4)', 3, a);
+    g.save(); g.globalAlpha = a; rr(160, 230, 1600, 170, 16); g.fillStyle = C.s1; g.fill(); g.restore();
+    const y = 315; line(330, y, 1590, y, 'rgba(30,24,60,.4)', 3, a);
     for (let i = 0; i < 7; i++) { const q = ((T - 314) * .35 + i / 7) % 1; dot(lerp(330, 1590, q), y, 6, C.acc, a); }
     [[330, 'Tuyến dưới'], [1590, 'Tuyến trên']].forEach(([x, n], i) => { dot(x, y, 26, C.s3, a); chip('AI', x, y - 22, { al: 'center', size: 22, k: IN(314.6 + i * .6) * a, fill: C.accD, stroke: C.acc }); tx(n, x, y + 66, { size: 28, w: 700, al: 'center', a }); });
     lowerThird('Điều quyết định', 'Cách ta thiết kế luật chơi cho AI', 319.6, 322.4);
@@ -492,11 +496,11 @@ function ovPositions() {
 }
 
 function ovBoundaries() {
-  if (T < 328.2) { const a = LIVE(322.6, 328.1); g.save(); g.globalAlpha = a; rr(460, 330, 1000, 260, 20); g.fillStyle = 'rgba(8,9,14,.84)'; g.fill(); g.restore();
+  if (T < 328.2) { const a = LIVE(322.6, 328.1); g.save(); g.globalAlpha = a; rr(460, 330, 1000, 260, 20); g.fillStyle = C.s1; g.fill(); g.restore();
     tx('Ba ranh giới', 960, 450, { size: 96, w: 800, al: 'center', a }); tx('không được phép vượt qua', 960, 530, { size: 40, w: 600, al: 'center', c: C.red, a: a * EO(326.5) }); return; }
   if (T < 339.5) {
     lowerThird('Ranh giới 1', 'Trách nhiệm sinh tử thuộc về con người', 328.4, 339.4, { c: C.red });
-    if (T > 332.5) { const a = LIVE(332.5, 339.4), sw = eio(P(335.0, 1.0)); g.save(); g.globalAlpha = a; rr(1080, 200, 760, 230, 16); g.fillStyle = 'rgba(8,9,14,.86)'; g.fill(); g.restore();
+    if (T > 332.5) { const a = LIVE(332.5, 339.4), sw = eio(P(335.0, 1.0)); g.save(); g.globalAlpha = a; rr(1080, 200, 760, 230, 16); g.fillStyle = C.s1; g.fill(); g.restore();
       label('Bác sĩ đầu ngành chuyển vai', 1120, 250, { a, c: C.acc });
       tx('Trực tiếp chẩn đoán', 1120, 312, { size: 34, w: 650, c: sw > .5 ? C.t3 : C.t1, a }); strike(1116, 300, tw('Trực tiếp chẩn đoán', 34, 650) + 8, P(335.0, .5));
       tx('→ Thẩm định chẩn đoán', 1120, 370, { size: 38, w: 800, c: C.acc, a: a * sw });
@@ -507,7 +511,7 @@ function ovBoundaries() {
     lowerThird('Ranh giới 2', 'AI phải hiểu bối cảnh bản địa', 339.7, 344.4, { c: C.red });
     if (T > 342.7) { const a = LIVE(342.7, 354.0);
       [['Bảng giá y tế Mỹ', ['Chụp chuyên sâu · $$$', 'Xét nghiệm gen · $$$$'], 344.5, 160], ['Bệnh viện huyện vùng cao', ['Không có máy chụp', 'Không có máy xét nghiệm gen'], 349.0, 1000]].forEach(([h, rows, t, x], i) => {
-        const k = EO(i ? 343.0 : 342.8) * a; g.save(); g.globalAlpha = k; rr(x, 560, 760, 250, 16); g.fillStyle = 'rgba(8,9,14,.88)'; g.fill(); g.strokeStyle = i ? C.red : C.line; g.lineWidth = 2; g.stroke(); g.restore();
+        const k = EO(i ? 343.0 : 342.8) * a; g.save(); g.globalAlpha = k; rr(x, 560, 760, 250, 16); g.fillStyle = C.s1; g.fill(); g.strokeStyle = i ? C.red : C.line; g.lineWidth = 2; g.stroke(); g.restore();
         label(h, x + 36, 610, { a: k, c: i ? C.red : C.acc });
         rows.forEach((r, j) => tx(r, x + 36, 680 + j * 58, { size: 34, w: 650, a: k * EO(t + j * .5), c: i ? C.red : C.t1 })); });
       if (T > 347.6) { line(930, 685, 990, 685, C.red, 4, a * P(347.6, .4)); }
@@ -517,7 +521,7 @@ function ovBoundaries() {
   if (T < 367.1) {
     lowerThird('Ranh giới 3', 'Hội chẩn từ xa là một quá trình đào tạo', 354.3, 360.0);
     if (T > 358.5) { const a = LIVE(358.5, 367.0);
-      g.save(); g.globalAlpha = a; rr(96, 180, 1728, 150, 16); g.fillStyle = 'rgba(8,9,14,.84)'; g.fill(); g.restore();
+      g.save(); g.globalAlpha = a; rr(96, 180, 1728, 150, 16); g.fillStyle = C.s1; g.fill(); g.restore();
       ['Dữ kiện', 'Giả thuyết', 'Loại trừ', 'Xét nghiệm', 'Kết luận'].forEach((s, i) => { const x = 280 + i * 340, k = IN(358.7 + i * .45) * a;
         if (i < 4) line(x + 110, 255, x + 230, 255, C.acc, 3, P(359.0 + i * .45, .4) * a);
         g.save(); g.translate(x, 255); g.scale(k, k); panel(-110, -40, 220, 80, { r: 40, fill: C.accD, stroke: C.acc }); tx(s, 0, 10, { size: 28, w: 700, al: 'center' }); g.restore(); });
@@ -539,7 +543,7 @@ function ovBoundaries() {
     tx('Hôm nay chính xác —', 96, 262, { size: 46, w: 750, a: EO(379.3) });
     tx('10 năm sau phụ thuộc', 96, 322, { size: 46, w: 750, c: C.red, a: EO(382.7) });
     const x0 = 120, x1 = 1100, y0 = 470, y1 = 860;
-    line(x0, y1, x1, y1, 'rgba(255,255,255,.3)', 2); label('Hôm nay', x0, y1 + 40); label('10 năm tới', x1, y1 + 40, { al: 'right' });
+    line(x0, y1, x1, y1, 'rgba(30,24,60,.3)', 2); label('Hôm nay', x0, y1 + 40); label('10 năm tới', x1, y1 + 40, { al: 'right' });
     const k = EO(379.3, 1.2), k2 = EO(382.7, 3.5);
     dot(x0 + 20, y0 + 30, 14 * k, C.acc, k, C.acc); label('chẩn đoán đúng', x0 + 50, y0 + 36, { a: k, c: C.acc });
     g.save(); g.strokeStyle = C.red; g.lineWidth = 5; g.beginPath(); for (let i = 0; i <= 60 * k2; i++) { const q = i / 60; const x = lerp(x0 + 20, x1, q), y = lerp(y0 + 30, y1 - 30, q * q); i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); g.restore();
@@ -555,7 +559,7 @@ function ovFourQ() {
   tx('Khi đọc tin AI y tế giỏi hơn con người', 160, 270, { size: 46, w: 750, a: EO(396.0) });
   [['Chuyên khoa hay đa khoa?', 398.8], ['Có được dùng tài liệu không?', 401.8], ['Bệnh nhân thật hay hồ sơ cũ?', 404.6], ['Ai soạn đề thi?', 407.7]].forEach(([s, t], i) => {
     const y = 330 + i * 130, k = EO(t - .1, .5), nx = [401.8, 404.6, 407.7, 1e9][i], on = T > t && T < nx;
-    panel(160, y + (1 - k) * 20, 1600, 104, { a: k, fill: on ? 'rgba(42,35,87,.95)' : C.s1, stroke: on ? C.acc : C.line });
+    panel(160, y + (1 - k) * 20, 1600, 104, { a: k, fill: on ? C.accD : C.s1, stroke: on ? C.acc : C.line });
     tx(String(i + 1).padStart(2, '0'), 220, y + 68, { f: FM, size: 32, w: 600, c: C.acc, a: k });
     tx(s, 320, y + 68, { size: 40, w: 700, a: k });
     check(1680, y + 52, 36, P(t + 1.2, .4));
@@ -570,7 +574,7 @@ function ovDesign() {
     label('Quyết định ngay từ đầu', 1000, 230, { c: C.acc, size: 22, a: EO(417.1) });
     tx('Công cụ AI của bạn là…', 1000, 290, { size: 46, w: 750, a: EO(417.2) });
     const k1 = IN(418.4), k2 = IN(420.9);
-    g.save(); g.translate(1400, 470); g.scale(k1, k1); panel(-400, -90, 800, 180, { fill: C.accD, stroke: C.acc, glow: 'rgba(139,124,255,.6)' }); tx('Một người gia sư', 0, 18, { size: 52, w: 800, al: 'center' }); g.restore();
+    g.save(); g.translate(1400, 470); g.scale(k1, k1); panel(-400, -90, 800, 180, { fill: C.accD, stroke: C.acc, glow: 'rgba(91,63,224,.6)' }); tx('Một người gia sư', 0, 18, { size: 52, w: 800, al: 'center' }); g.restore();
     tx('hay', 1400, 630, { size: 34, w: 500, al: 'center', c: C.t3, a: k2 });
     g.save(); g.translate(1400, 760); g.scale(k2, k2); panel(-400, -90, 800, 180, { fill: C.s1 }); tx('Cỗ máy giải bài?', 0, 18, { size: 52, w: 800, al: 'center', c: C.t2 }); g.restore();
   }
@@ -578,11 +582,11 @@ function ovDesign() {
 
 function ovClose() {
   lowerThird('Chi tiết rất con người', 'AI thông minh lên nhờ bắt chước', 423.8, 434.8, { sub: T > 430.9 ? 'cách bác sĩ tổ chức · phản biện · làm việc nhóm' : 'cách các bác sĩ làm việc cùng nhau' });
-  if (T > 435 && T < 441.5) { const a = LIVE(435.0, 441.4); g.save(); g.globalAlpha = a; rr(96, 600, 980, 230, 16); g.fillStyle = 'rgba(8,9,14,.86)'; g.fill(); g.restore();
+  if (T > 435 && T < 441.5) { const a = LIVE(435.0, 441.4); g.save(); g.globalAlpha = a; rr(96, 600, 980, 230, 16); g.fillStyle = C.s1; g.fill(); g.restore();
     label('Nửa đêm · tuyến dưới', 136, 650, { a, c: C.acc }); tx('Hỏi ai trước?', 136, 720, { size: 50, w: 800, a: a * EO(436.5) });
     chip('AI', 136, 750, { k: IN(439.2) * a, size: 28, fill: C.accD, stroke: C.acc }); chip('Chờ chuyên gia tới sáng', 260, 750, { k: IN(440.2) * a, size: 28 }); }
   if (T > 441.5 && T < 448.4) { const a = LIVE(441.6, 448.3);
-    g.save(); g.globalAlpha = a; rr(96, 560, 1100, 280, 16); g.fillStyle = 'rgba(8,9,14,.86)'; g.fill(); g.restore();
+    g.save(); g.globalAlpha = a; rr(96, 560, 1100, 280, 16); g.fillStyle = C.s1; g.fill(); g.restore();
     chip('Cỗ máy', 136, 600, { size: 34, k: IN(441.8) * a, fill: C.accD, stroke: C.acc }); tx('≠', 420, 650, { size: 70, w: 800, c: C.red, a: a * EO(442.4) }); chip('Chuyên gia', 500, 600, { size: 34, k: IN(442.6) * a });
     label('Quy định pháp lý ghi nhận', 136, 730, { a: a * EO(444.1) }); tx('Ai có quyền nói lời cuối cùng?', 136, 800, { size: 50, w: 800, a: a * EO(445.5) }); }
   if (T > 448.4 && T < 458.6) {
@@ -591,8 +595,9 @@ function ovClose() {
   }
   if (T > 458.6) {
     const a = LIVE(458.8, 463.2, .5);
-    tx('Xin chào và hẹn gặp lại ở tập sau', 960, 520, { size: 56, w: 800, al: 'center', a });
-    label('Tập 35 · AI & Y tế', 960, 580, { al: 'center', a, c: C.acc });
+    g.save(); g.globalAlpha = a; rr(360, 430, 1200, 200, 20); g.fillStyle = C.s2; g.fill(); g.restore();
+    tx('Xin chào và hẹn gặp lại ở tập sau', 960, 535, { size: 52, w: 800, al: 'center', a });
+    label('Tập 35 · AI & Y tế', 960, 595, { al: 'center', a, c: C.acc });
   }
 }
 
@@ -608,7 +613,7 @@ function caption(t) {
   const w = Math.max(...lines.map(l => tw(l, size, 500))) + 110, h = lines.length * lh + 34, x = W / 2 - w / 2, y = 1040 - h + (1 - k) * 10;
   g.save(); g.globalAlpha = a;
   g.shadowColor = 'rgba(0,0,0,.6)'; g.shadowBlur = 30; rr(x, y, w, h, Math.min(h / 2, 34)); g.fillStyle = 'rgba(10,11,18,0.9)'; g.fill();
-  g.shadowColor = 'transparent'; g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 1.5; g.stroke();
+  g.shadowColor = 'transparent'; g.strokeStyle = 'rgba(30,24,60,.14)'; g.lineWidth = 1.5; g.stroke();
   dot(x + 40, y + h / 2, 7, C.acc);
   lines.forEach((l, j) => tx(l, x + 64, y + 17 + lh * j + lh * .5 + size * .36, { size, w: 500 }));
   g.restore();
@@ -625,18 +630,18 @@ window.render = async (t) => {
   drawFootage(img, t, L[1], L[2]);
   // light-sweep wipe at chapter changes
   for (const [t0] of OVERLAYS.slice(1)) { const p = (t - t0) / .35; if (p >= 0 && p < 1) { const x = lerp(-300, W + 300, eio(p)); const gr = g.createLinearGradient(x - 240, 0, x + 240, 0);
-    gr.addColorStop(0, 'rgba(139,124,255,0)'); gr.addColorStop(.5, 'rgba(180,170,255,.45)'); gr.addColorStop(1, 'rgba(139,124,255,0)'); g.fillStyle = gr; g.fillRect(x - 240, 0, 480, H); } }
+    gr.addColorStop(0, 'rgba(91,63,224,0)'); gr.addColorStop(.5, 'rgba(255,255,255,.45)'); gr.addColorStop(1, 'rgba(91,63,224,0)'); g.fillStyle = gr; g.fillRect(x - 240, 0, 480, H); } }
   let ov = OVERLAYS[0][1]; for (const [t0, f] of OVERLAYS) if (t >= t0) ov = f;
   ov();
   if (t > 462.6) { g.fillStyle = `rgba(0,0,0,${clamp((t - 462.6) / 1.2)})`; g.fillRect(0, 0, W, H); }
   bug(t);
-  window._cap = caption(t);
+  window._cap = null;   // no burned-in subtitles (the .srt stays alongside)
 };
 window.TEXTS = async (t) => { await window.render(t); return window._cap ? [window._cap] : []; };
 window.EV = OVERLAYS.slice(1).map(s => ({ t: s[0], type: 'whoosh' }));
 
-const faces = [['Inter', 'Inter-Regular.otf', 400], ['Inter', 'Inter-Medium.otf', 500], ['Inter', 'Inter-SemiBold.otf', 600], ['Inter', 'Inter-Bold.otf', 700], ['Inter', 'Inter-ExtraBold.otf', 800], ['Inter Display', 'InterDisplay-Bold.otf', 700], ['JetBrains Mono', 'JetBrainsMono-SemiBold.ttf', 600]];
-await Promise.all(faces.map(async ([fam, file, w]) => { const f = new FontFace(fam, `url(../fonts/${file})`, { weight: String(w) }); await f.load(); document.fonts.add(f); }));
+const faces = [['Regular', 400], ['Medium', 500], ['SemiBold', 600], ['Bold', 700], ['ExtraBold', 800], ['Black', 900]];
+await Promise.all(faces.map(async ([n, w]) => { const f = new FontFace('Be Vietnam Pro', `url(/fonts/BeVietnamPro-${n}.ttf)`, { weight: String(w) }); await f.load(); document.fonts.add(f); }));
 await window.render(0);
 window.READY = true;
 </script></body></html>
