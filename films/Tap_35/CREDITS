@@ -3,3 +3,7 @@ Fonts: Inter, Inter Display (Rasmus Andersson) — SIL Open Font License 1.1.
        JetBrains Mono (JetBrains) — SIL Open Font License 1.1.
 Sound effects: synthesized procedurally (core/audio/sfx.py), no samples.
 Graphics: all drawn in code (Canvas 2D). Vietnam outline is a hand-made stylization, not survey data.
+
+v2 (Tap_35_v2.mp4):
+B-roll: my-assets/Clip1–7.mp4 — supplied by the user (original clip audio not used).
+Map: Natural Earth 1:10m Admin 0 Countries — public domain (naturalearthdata.com); Hoàng Sa and Trường Sa labelled as Vietnamese archipelagos.
