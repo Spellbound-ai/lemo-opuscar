@@ -1,0 +1,5 @@
+Voice: Tap_35.MP3 — supplied by the user.
+Fonts: Inter, Inter Display (Rasmus Andersson) — SIL Open Font License 1.1.
+       JetBrains Mono (JetBrains) — SIL Open Font License 1.1.
+Sound effects: synthesized procedurally (core/audio/sfx.py), no samples.
+Graphics: all drawn in code (Canvas 2D). Vietnam outline is a hand-made stylization, not survey data.
